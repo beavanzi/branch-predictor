@@ -7,7 +7,7 @@
 
 
 typedef struct {
-    bitset<2> state;
+    unsigned int state:2;
 } stateMachine;
 
 typedef vector<stateMachine> simplePHT;
@@ -36,9 +36,7 @@ void initializePHTs(composedPHTs &PHTs, int len_phts, int len_pht){
     for (int i=0; i<len_phts; i++) {
          //inicializando cada PHT para a tabela de PHTs
         simplePHT PHT;
-
         initializePHT(PHT, len_pht);
-
         PHTs.push_back(PHT);
     }
 
@@ -54,7 +52,7 @@ void initializeBHT(BHT &BHT, int len_bht) {
 }
 
 bool isTaken(stateMachine machine){
-    return machine.state.to_ulong() >= 2;
+    return machine.state >= 2;
 }
 
 int getMask(int n_bits) {
@@ -87,8 +85,8 @@ uintptr_t getBitsMoreSignificant(int n_bits, uintptr_t inst) {
 }
 
 void updateToTaken(simplePHT &PHT, simpleBHR &BHR) {
-    if (PHT[BHR.actualHistoric].state.to_ulong() < 3){
-        PHT[BHR.actualHistoric].state = PHT[BHR.actualHistoric].state.to_ulong() + 1;
+    if (PHT[BHR.actualHistoric].state < 3){
+        PHT[BHR.actualHistoric].state = PHT[BHR.actualHistoric].state + 1;
     }
 
     BHR.actualHistoric = BHR.actualHistoric << 1;
@@ -96,8 +94,8 @@ void updateToTaken(simplePHT &PHT, simpleBHR &BHR) {
 }
 
 void updateToNotTaken(simplePHT &PHT, simpleBHR &BHR) {
-    if (PHT[BHR.actualHistoric].state.to_ulong() > 0){
-        PHT[BHR.actualHistoric].state = PHT[BHR.actualHistoric].state.to_ulong() - 1;
+    if (PHT[BHR.actualHistoric].state > 0){
+        PHT[BHR.actualHistoric].state = PHT[BHR.actualHistoric].state - 1;
     }
 
     BHR.actualHistoric = BHR.actualHistoric << 1;

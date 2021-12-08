@@ -28,7 +28,11 @@ Crie as variáveis de ambiente executando:
 
 Para rodar uma variação, execute:
 
-``./codigo/ && pin -t obj-intel64/bp_<variacao>.so -- <programa>``
+``pin -t ./codigo/obj-intel64/bp_<variacao>.so -- <programa>``
+
+Exemplo:
+
+``pin -t ./codigo/obj-intel64/bp_gag.so -- ./codigo/3mm``
 
 As variações disponíveis são:
 * gag, gas, gap
