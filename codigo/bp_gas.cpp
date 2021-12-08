@@ -31,17 +31,12 @@ void BP::init()
     * Additionally, you can also write to this file by outputting to br_trace.
     */
 
-    BHR.actualHistoric = 0;
     int qtt_pht = pow(2, (float)M);
     int len_pht = pow(2, (float)K);
 
-    for (int i=0; i<qtt_pht; i++) {
-        simplePHT PHT;
+    BHR.actualHistoric = 0;
 
-        initializePHT(PHT, len_pht);
-
-        PHTs.push_back(PHT);
-    }
+    initializePHTs(PHTs, qtt_pht, len_pht);
 
     br_trace_level = TRACE_LEVEL_NONE;
     br_trace << "GAs 2-level Branch Predictor!" << endl;
@@ -109,12 +104,12 @@ Prediction BP::predict(EntInfo br)
  */
 void BP::update(ResInfo br)
 {
-    int index = getBitsMoreSignificant(M, br.inst_ptr);
+    int instSet = getBitsMoreSignificant(M, br.inst_ptr);
     
     if (br.taken) {
-        updateToTaken(PHTs[index], BHR);
+        updateToTaken(PHTs[instSet], BHR);
     } else {
-        updateToNotTaken(PHTs[index], BHR);
+        updateToNotTaken(PHTs[instSet], BHR);
     }
 
     if (!br.direct) {

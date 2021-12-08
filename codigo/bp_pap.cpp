@@ -30,24 +30,13 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
-    int qtt_bhr = pow(2, (float)A);
-
-    for (int i = 0; i<qtt_bhr; i++) {
-        simpleBHR BHR;
-        BHR.actualHistoric = 0;
-        BHT_p.push_back(BHR);
-    }
-
-
-    int qtt_pht = qtt_bhr;
+    int len_bht = pow(2, (float)A);
     int len_pht = pow(2, (float)K);
-    for (int i=0; i<qtt_pht; i++) {
-        simplePHT PHT;
 
-        initializePHT(PHT, len_pht);
+    initializeBHT(BHT_p, len_bht);
 
-        PHTs.push_back(PHT);
-    }
+    initializePHTs(PHTs, len_bht, len_pht);
+
 
     br_trace_level = TRACE_LEVEL_NONE;
     br_trace << "PAp 2-level Branch Predictor!" << endl;
@@ -112,12 +101,12 @@ Prediction BP::predict(EntInfo br)
  */
 void BP::update(ResInfo br)
 {
-    int index = getBitsLessSignificant(A, br.inst_ptr);
+    int instAddress = getBitsLessSignificant(A, br.inst_ptr);
     
     if (br.taken) {
-        updateToTaken(PHTs[index], BHT_p[index]);
+        updateToTaken(PHTs[instAddress], BHT_p[instAddress]);
     } else {
-        updateToNotTaken(PHTs[index], BHT_p[index]);
+        updateToNotTaken(PHTs[instAddress], BHT_p[instAddress]);
     }
     
     

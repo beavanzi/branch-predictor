@@ -30,16 +30,10 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
-    int qtt_bhr = pow(2, (float)A);
-
-    for (int i = 0; i<qtt_bhr; i++) {
-        simpleBHR BHR;
-        BHR.actualHistoric = 0;
-        BHT_p.push_back(BHR);
-    }
-
+    int len_bht = pow(2, (float)A);
     int len_pht = pow(2, (float)K);
 
+    initializeBHT(BHT_p, len_bht);
     
     initializePHT(PHT, len_pht);
   
@@ -106,12 +100,12 @@ Prediction BP::predict(EntInfo br)
  */
 void BP::update(ResInfo br)
 {
-    int index = getBitsLessSignificant(A, br.inst_ptr);
+    int instAddress = getBitsLessSignificant(A, br.inst_ptr);
     
     if (br.taken) {
-        updateToTaken(PHT, BHT_p[index]);
+        updateToTaken(PHT, BHT_p[instAddress]);
     } else {
-        updateToNotTaken(PHT, BHT_p[index]);
+        updateToNotTaken(PHT, BHT_p[instAddress]);
     }
     
     

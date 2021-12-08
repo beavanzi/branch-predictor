@@ -30,25 +30,13 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
-    int qtt_bhr = pow(2, (float)A);
-
-    for (int i = 0; i<qtt_bhr; i++) {
-        simpleBHR BHR;
-        BHR.actualHistoric = 0;
-        BHT_s.push_back(BHR);
-    }
-
-
-    int qtt_pht = qtt_bhr;
+    int len_bht = pow(2, (float)I);
+    int qtt_pht = pow(2, (float)A);
     int len_pht = pow(2, (float)K);
 
-    for (int i=0; i<qtt_pht; i++) {
-        simplePHT PHT;
+    initializeBHT(BHT_s, len_bht);
 
-        initializePHT(PHT, len_pht);
-
-        PHTs.push_back(PHT);
-    }
+    initializePHTs(PHTs, qtt_pht, len_pht);
 
     br_trace_level = TRACE_LEVEL_NONE;
     br_trace << "SAp 2-level Branch Predictor!" << endl;

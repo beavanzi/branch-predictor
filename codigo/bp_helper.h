@@ -21,7 +21,7 @@ typedef struct {
 typedef vector<simpleBHR> BHT;
 
 
-// Auxiliaries functions
+// Funções auxiliares
 
 void initializePHT(simplePHT &PHT, int len_pht) {
     for (int i=0; i<len_pht; i++) {
@@ -29,6 +29,27 @@ void initializePHT(simplePHT &PHT, int len_pht) {
         stateMachine EM;
         EM.state = 0b00;
         PHT.push_back(EM);
+    }
+}
+
+void initializePHTs(composedPHTs &PHTs, int len_phts, int len_pht){
+    for (int i=0; i<len_phts; i++) {
+         //inicializando cada PHT para a tabela de PHTs
+        simplePHT PHT;
+
+        initializePHT(PHT, len_pht);
+
+        PHTs.push_back(PHT);
+    }
+
+}
+
+void initializeBHT(BHT &BHT, int len_bht) {
+    for (int i = 0; i<len_bht; i++) {
+        //inicializando cada BHR para a BHT
+        simpleBHR BHR;
+        BHR.actualHistoric = 0;
+        BHT.push_back(BHR);
     }
 }
 

@@ -34,9 +34,10 @@ void BP::init()
     * Additionally, you can also write to this file by outputting to br_trace.
     */
 
-    BHR.actualHistoric = 0;
     int len_pht = pow(2, (float)K);
 
+    BHR.actualHistoric = 0;
+    
     initializePHT(PHT, len_pht);
 
     br_trace_level = TRACE_LEVEL_NONE;
