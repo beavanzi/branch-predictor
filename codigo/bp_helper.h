@@ -6,17 +6,17 @@
 #define LEN_BHR 12
 
 
-typedef struct stateMachine {
+typedef struct {
     bitset<2> state;
-};
+} stateMachine;
 
 typedef vector<stateMachine> simplePHT;
 
 typedef vector<simplePHT> composedPHTs;
 
-typedef struct simpleBHR {
+typedef struct {
     unsigned int actualHistoric:LEN_BHR;
-};
+} simpleBHR;
 
 typedef vector<simpleBHR> BHT;
 
