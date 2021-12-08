@@ -73,23 +73,4 @@ void updateToNotTaken(simplePHT &PHT, simpleBHR &BHR) {
     BHR.actualHistoric = BHR.actualHistoric << 1;
 }
 
-// void updateToTakenTablePHT(composedPHTs PHT, simpleBHR BHR, int index) {
-//     if (PHT[index][BHR.actualHistoric].state.to_ulong() < 3){
-//         PHT[index][BHR.actualHistoric].state = PHT[index][BHR.actualHistoric].state.to_ulong() + 1;
-//     }
-
-//     BHR.actualHistoric = BHR.actualHistoric << 1;
-//     BHR.actualHistoric = BHR.actualHistoric + 1;
-// }
-
-// void updateToNotTakenTablePHT(composedPHTs PHT, simpleBHR BHR, int index) {
-//     if (PHT[index][BHR.actualHistoric].state.to_ulong() > 0){
-//         PHT[index][BHR.actualHistoric].state = PHT[index][BHR.actualHistoric].state.to_ulong() - 1;
-//     }
-    
-//     BHR.actualHistoric = BHR.actualHistoric << 1;
-// }
-
-
-
 #endif /* _BP_HELPER_H_ */
