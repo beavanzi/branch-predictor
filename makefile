@@ -1,8 +1,12 @@
-# Makefile
-BP ?= btfn 
-CONFIG_ROOT := $(PIN_ROOT)/source/tools/Config
-include $(CONFIG_ROOT)/makefile.config
+all: compile
 
 
-TEST_TOOL_ROOTS := bp_${BP}
-include $(TOOLS_ROOT)/Config/makefile.default.rules
+compile:
+	@cd codigo/ ; \
+	for var in gag gas gap pag pas pap sag sas sap ; do \
+		make BP=$$var ; \
+	done
+
+relatorio:
+	@cd relatorio/ ; \
+		make ; \
