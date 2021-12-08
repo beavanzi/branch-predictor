@@ -27,7 +27,7 @@ void initializePHT(simplePHT &PHT, int len_pht) {
     for (int i=0; i<len_pht; i++) {
         //inicializando cada maquina de estado de PHT
         stateMachine EM;
-        EM.state = 0b00;
+        EM.state = 0;
         PHT.push_back(EM);
     }
 }
@@ -56,7 +56,7 @@ bool isTaken(stateMachine machine){
 }
 
 int getMask(int n_bits) {
-    return pow(2, (float)n_bits) - 1;
+    return pow(2, (float) n_bits) - 1;
 }
 
 uintptr_t getBitsLessSignificant(int n_bits, uintptr_t inst) {

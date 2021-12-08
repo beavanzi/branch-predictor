@@ -31,8 +31,8 @@ void BP::init()
     * Additionally, you can also write to this file by outputting to br_trace.
     */
 
-    int qtt_pht = pow(2, (float)A);
-    int len_pht = pow(2, (float)K);
+    int qtt_pht = pow(2, (float) A);
+    int len_pht = pow(2, (float) K);
 
     BHR.actualHistoric = 0;
 

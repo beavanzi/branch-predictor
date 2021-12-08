@@ -30,9 +30,9 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
-    int len_bht = pow(2, (float)I);
-    int qtt_pht = pow(2, (float)A);
-    int len_pht = pow(2, (float)K);
+    int len_bht = pow(2, (float) I);
+    int qtt_pht = pow(2, (float) A);
+    int len_pht = pow(2, (float) K);
 
     initializeBHT(BHT_s, len_bht);
 
