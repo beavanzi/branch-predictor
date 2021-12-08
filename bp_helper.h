@@ -1,16 +1,95 @@
-/*
- * bp_helper.h
- * Computer Architecture - Lab 7: Branch Prediction
- * Derek Chiou
- * Alex Hsu, Chirag Sakhuja, Tommy Huynh
- * Spring 2016
- *
- * This file contains any common helper functions you might need.
- * YOU CAN CHANGE ANYTHING IN THIS FILE.
- */
-
 #ifndef _BP_HELPER_H_
 #define _BP_HELPER_H_
+#include <bitset>
+#include <vector>
+#include <math.h>
+#define LEN_BHR 12
+
+
+typedef struct stateMachine {
+    bitset<2> state;
+};
+
+typedef vector<stateMachine> simplePHT;
+
+typedef vector<simplePHT> composedPHTs;
+
+typedef struct simpleBHR {
+    unsigned int actualHistoric:LEN_BHR;
+};
+
+typedef vector<simpleBHR> BHT;
+
+
+// Auxiliaries functions
+
+bool isTaken(stateMachine machine){
+    return machine.state.to_ulong() >= 2;
+}
+
+int getMask(int n_bits) {
+    return pow(2, (float)n_bits) - 1;
+}
+
+uintptr_t getBitsLessSignificant(int n_bits, uintptr_t inst) {
+    return inst & getMask(n_bits);
+}
+
+int offsetToLeft(int big_len, int small_len) {
+    if (big_len > small_len) {
+        return big_len - small_len;    
+    }
+
+    return 0;
+}
+
+int getLenByExponent(uintptr_t n) {
+    return (int) log2(n) + 1;
+}
+
+uintptr_t getBitsMoreSignificant(int n_bits, uintptr_t inst) {
+    int mask = getMask(n_bits);
+    int inst_len = getLenByExponent(inst);
+    int offset = offsetToLeft(inst_len, n_bits);
+
+    inst = inst >> offset;
+    return inst & mask;
+}
+
+void updateToTaken(simplePHT &PHT, simpleBHR &BHR) {
+    if (PHT[BHR.actualHistoric].state.to_ulong() < 3){
+        PHT[BHR.actualHistoric].state = PHT[BHR.actualHistoric].state.to_ulong() + 1;
+    }
+
+    BHR.actualHistoric = BHR.actualHistoric << 1;
+    BHR.actualHistoric = BHR.actualHistoric + 1; 
+}
+
+void updateToNotTaken(simplePHT &PHT, simpleBHR &BHR) {
+    if (PHT[BHR.actualHistoric].state.to_ulong() > 0){
+        PHT[BHR.actualHistoric].state = PHT[BHR.actualHistoric].state.to_ulong() - 1;
+    }
+
+    BHR.actualHistoric = BHR.actualHistoric << 1;
+}
+
+// void updateToTakenTablePHT(composedPHTs PHT, simpleBHR BHR, int index) {
+//     if (PHT[index][BHR.actualHistoric].state.to_ulong() < 3){
+//         PHT[index][BHR.actualHistoric].state = PHT[index][BHR.actualHistoric].state.to_ulong() + 1;
+//     }
+
+//     BHR.actualHistoric = BHR.actualHistoric << 1;
+//     BHR.actualHistoric = BHR.actualHistoric + 1;
+// }
+
+// void updateToNotTakenTablePHT(composedPHTs PHT, simpleBHR BHR, int index) {
+//     if (PHT[index][BHR.actualHistoric].state.to_ulong() > 0){
+//         PHT[index][BHR.actualHistoric].state = PHT[index][BHR.actualHistoric].state.to_ulong() - 1;
+//     }
+    
+//     BHR.actualHistoric = BHR.actualHistoric << 1;
+// }
+
 
 
 #endif /* _BP_HELPER_H_ */

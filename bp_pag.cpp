@@ -11,8 +11,8 @@
  */
 uintptr_t last_target;
 
-simpleBHR BHR;
-composedPHTs PHTs;
+BHT BHT_p;
+simplePHT PHT;
 
 /*
  * Initialize branch predictor
@@ -30,24 +30,26 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
+    int qtt_bhr = pow(2, (float)A);
 
-    BHR.actualHistoric = 0;
-    int qtt_pht = pow(2, (float)A);
-    int len_pht = pow(2, (float)K);
-    for (int i=0; i<qtt_pht; i++) {
-        simplePHT PHT;
-
-        for (int j = 0; j < len_pht; j++) {
-            stateMachine EM;
-            EM.state = 0b00;
-            PHT.push_back(EM);
-        }
-
-        PHTs.push_back(PHT);
+    for (int i = 0; i<qtt_bhr; i++) {
+        simpleBHR BHR;
+        BHR.actualHistoric = 0;
+        BHT_p.push_back(BHR);
     }
 
+    int len_pht = pow(2, (float)K);
+    
+
+    for (int j = 0; j < len_pht; j++) {
+        stateMachine EM;
+        EM.state = 0b00;
+        PHT.push_back(EM);
+    }
+
+  
     br_trace_level = TRACE_LEVEL_NONE;
-    br_trace << "GAp 2-level Branch Predictor!" << endl;
+    br_trace << "PAg 2-level Branch Predictor!" << endl;
 }
 
 /*
@@ -75,9 +77,9 @@ Prediction BP::predict(EntInfo br)
 {
     uintptr_t target;
     
-    unsigned int indexToSecondLevel = BHR.actualHistoric;
     int instAddress = getBitsLessSignificant(A, br.inst_ptr);
-    bool taken = isTaken(PHTs[instAddress][indexToSecondLevel]); 
+    unsigned int indexToSecondLevel = BHT_p[instAddress].actualHistoric;
+    bool taken = isTaken(PHT[indexToSecondLevel]); 
 
     // Predict the taken target. If the branch is direct, just use the actual
     // target, otherwise, use the last target.
@@ -112,9 +114,9 @@ void BP::update(ResInfo br)
     int index = getBitsLessSignificant(A, br.inst_ptr);
     
     if (br.taken) {
-        updateToTaken(PHTs[index], BHR);
+        updateToTaken(PHT, BHT_p[index]);
     } else {
-        updateToNotTaken(PHTs[index], BHR);
+        updateToNotTaken(PHT, BHT_p[index]);
     }
     
     

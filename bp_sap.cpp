@@ -3,7 +3,7 @@
 #include <math.h>
 #define K 12
 #define A 8
-
+#define I 4
 /*
  * Branch predictor state
  * Declare the global state needed by your branch predictor. All storage used
@@ -11,7 +11,7 @@
  */
 uintptr_t last_target;
 
-simpleBHR BHR;
+BHT BHT_s;
 composedPHTs PHTs;
 
 /*
@@ -30,10 +30,18 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
+    int qtt_bhr = pow(2, (float)A);
 
-    BHR.actualHistoric = 0;
-    int qtt_pht = pow(2, (float)A);
+    for (int i = 0; i<qtt_bhr; i++) {
+        simpleBHR BHR;
+        BHR.actualHistoric = 0;
+        BHT_s.push_back(BHR);
+    }
+
+
+    int qtt_pht = qtt_bhr;
     int len_pht = pow(2, (float)K);
+
     for (int i=0; i<qtt_pht; i++) {
         simplePHT PHT;
 
@@ -47,7 +55,7 @@ void BP::init()
     }
 
     br_trace_level = TRACE_LEVEL_NONE;
-    br_trace << "GAp 2-level Branch Predictor!" << endl;
+    br_trace << "SAp 2-level Branch Predictor!" << endl;
 }
 
 /*
@@ -75,7 +83,8 @@ Prediction BP::predict(EntInfo br)
 {
     uintptr_t target;
     
-    unsigned int indexToSecondLevel = BHR.actualHistoric;
+    int instSet = getBitsMoreSignificant(I, br.inst_ptr);
+    unsigned int indexToSecondLevel = BHT_s[instSet].actualHistoric;
     int instAddress = getBitsLessSignificant(A, br.inst_ptr);
     bool taken = isTaken(PHTs[instAddress][indexToSecondLevel]); 
 
@@ -109,12 +118,13 @@ Prediction BP::predict(EntInfo br)
  */
 void BP::update(ResInfo br)
 {
-    int index = getBitsLessSignificant(A, br.inst_ptr);
+    int instAddress = getBitsLessSignificant(A, br.inst_ptr);
+    int instSet = getBitsMoreSignificant(I, br.inst_ptr);
     
     if (br.taken) {
-        updateToTaken(PHTs[index], BHR);
+        updateToTaken(PHTs[instAddress], BHT_s[instSet]);
     } else {
-        updateToNotTaken(PHTs[index], BHR);
+        updateToNotTaken(PHTs[instAddress], BHT_s[instSet]);
     }
     
     

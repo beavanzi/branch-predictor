@@ -1,22 +1,10 @@
-/*
- * bp_gap.cpp
- * Computer Architecture - Lab 7: Branch Prediction
- * Derek Chiou
- * Alex Hsu, Chirag Sakhuja, Tommy Huynh
- * Spring 2016
- *
- * This file contains the implementation of the branch predictor.
- * YOU CAN CHANGE ANYTHING IN THIS FILE.
- * Implement your GAp 2-level branch predictor here. It starts off with the
- * same code as bp_btfn.cpp.
- */
-
 #include "bp.h"
 #include "bp_helper.h"
 #include <bitset>
 #include <vector>
-#include "math.h"
-#define LEN_BHR 10
+#include <math.h>
+// tamanho da BHR ou simplesmente o numero k de ultimos saltos armazenados
+#define K 12
 
 
 /*
@@ -26,29 +14,15 @@
  */
 uintptr_t last_target;
 
-typedef struct State {
-  bitset<2> state;
-};
-
-vector<State> PHT;
-vector<bool> BHR;
-int BHR:k; 
-
-int getIndex(vector<bool> bhr) {
-    return 0;
-}
-
-bool isTaken(vector<State> pht) {
-    return pht[index].state.toLong() < 1;
-}
-
+simpleBHR BHR;
+simplePHT PHT;
 
 /*
  * Initialize branch predictor
  * This function is called once at the beginning of the program to initialize
  * the global branch predictor state.
  */
-void BP::init(Parameters params)
+void BP::init()
 {
    /* The following flag can be helpful when debugging your branch predictor.
     * A record of the branches and your predictions can be written to the file
@@ -59,19 +33,21 @@ void BP::init(Parameters params)
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
+
+    BHR.actualHistoric = 0;
+    int len_pht = pow(2, (float)K);
+
+
+
+    for (int i=0; i<len_pht; i++) {
+        //inicializando cada maquina de estado de PHT
+        stateMachine EM;
+        EM.state = 0b00;
+        PHT.push_back(EM);
+    }
+
     br_trace_level = TRACE_LEVEL_NONE;
     br_trace << "GAg 2-level Branch Predictor!" << endl;
-
-    BHR = 0;
-
-    int len_pht = pow(2, (float)LEN_BHR);
-
-    for (double i=0; i<len_pht; i++) {
-        State aux;
-        aux.state[0] = 0;
-        aux.state[1] = 0;
-        PHT.push_back(aux);
-    }
 }
 
 /*
@@ -100,8 +76,10 @@ Prediction BP::predict(EntInfo br)
     bool taken;
     uintptr_t target;
 
-    int index = getIndex(BHR);
-    taken = isTaken(PHT[index]);
+    int indexToSecondLevel = BHR.actualHistoric;
+
+    // no segundo nível existe uma maquina de estados com os bits de previsao sobre a tomada do salto
+    taken = isTaken(PHT[indexToSecondLevel]);
 
     // Predict the taken target. If the branch is direct, just use the actual
     // target, otherwise, use the last target.
@@ -133,18 +111,10 @@ Prediction BP::predict(EntInfo br)
  */
 void BP::update(ResInfo br)
 {
-    int index = getIndex(BHR);
-
     if (br.taken) {
-        if (PHT[index].state.toLong() < 3 ) {
-           PHT[index].state = PHT[index].state.toLong() + 1;
-        }
-        BHR << 1;
+        updateToTaken(PHT, BHR);
     } else {
-        if (PHT[index].state.toLong() > 0 ) {
-            PHT[index].state = PHT[index].state.toLong() - 1;
-        }
-        BHR << 0;
+        updateToNotTaken(PHT, BHR);
     }
     
     

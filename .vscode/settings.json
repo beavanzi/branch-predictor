@@ -4,6 +4,8 @@
     "string": "cpp",
     "chrono": "cpp",
     "bitset": "cpp",
-    "*.ph": "cpp"
+    "*.ph": "cpp",
+    "cmath": "cpp",
+    "functional": "cpp"
   }
 }

@@ -125,7 +125,7 @@ struct Prediction
 // BP class
 class BP {
 public:
-    static void init(Parameters);
+    static void init();
     static Prediction predict(EntInfo);
     static void update(ResInfo);
 };
@@ -286,52 +286,52 @@ void Shell::instruction(INS ins, VOID*)
     }
 }
 
-typedef struct {
-    int a;
-    int k;
-    int m;
-    int i;
-    char b[3];
-} Parameters;
+// typedef struct {
+//     int a;
+//     int k;
+//     int m;
+//     int i;
+//     char b[3];
+// } Parameters;
 
-Parameters readParameters(int argc, char** argv) {
-    Parameters params;
-    char opt;
+// Parameters readParameters(int argc, char** argv) {
+//     Parameters params;
+//     char opt;
 
-    while ((opt = getopt(argc, argv, "a:k:m:i:b:")) != -1) {
-        switch (opt) {
-        case 'a':
-            params.a = 0;
-        break;
-        case 'b':
-            strcpy(params.b, &opt);
-        break;
-        case 'k':
-            params.k = 0;
-        break;
-        case 'm':
-            params.m = 0;
-        break;
-        case 'i':
-            params.i = 0;
-        break;
-        default:
-        fprintf(stderr, "Usage: %s -a **_size -b algorithm (gag | gas | etc) -k **_size -m **_size -i **_size\n",
-            argv[0]);
-        exit(EXIT_FAILURE);
-        }
-    }
-}
+//     while ((opt = getopt(argc, argv, "a:k:m:i:b:")) != -1) {
+//         switch (opt) {
+//         case 'a':
+//             params.a = 0;
+//         break;
+//         case 'b':
+//             strcpy(params.b, &opt);
+//         break;
+//         case 'k':
+//             params.k = 0;
+//         break;
+//         case 'm':
+//             params.m = 0;
+//         break;
+//         case 'i':
+//             params.i = 0;
+//         break;
+//         default:
+//         fprintf(stderr, "Usage: %s -a **_size -b algorithm (gag | gas | etc) -k **_size -m **_size -i **_size\n",
+//             argv[0]);
+//         exit(EXIT_FAILURE);
+//         }
+//     }
+// }
 
 // main
 int main(int argc, char** argv)
 {
     if (PIN_Init(argc, argv)) return 1;
-    Parameters params = readParameters(argc, argv);
+    // Parameters params = readParameters(argc, argv);
 
     br_trace.open("branch_trace.out");
     Shell::start();
-    BP::init(params);
+    BP::init();
 
     INS_AddInstrumentFunction(Shell::instruction, 0);
     PIN_AddFiniFunction(Shell::finish, 0);

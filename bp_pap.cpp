@@ -1,25 +1,8 @@
-// typedef struct State {
-//   bitset<2> state;
-// };
-
-// vector<State> PHT; PHT[k]
-// vector<bool> BHR; BHR[j][2ˆn]
-
-/*
- * bp_custom.cpp
- * Computer Architecture - Lab 7: Branch Prediction
- * Derek Chiou
- * Alex Hsu, Chirag Sakhuja, Tommy Huynh
- * Spring 2016
- *
- * This file contains the implementation of the branch predictor.
- * YOU CAN CHANGE ANYTHING IN THIS FILE.
- * Implement a branch predictor of your own choice here. It starts off with the
- * same code as bp_btfn.cpp.
- */
-
 #include "bp.h"
 #include "bp_helper.h"
+#include <math.h>
+#define K 12
+#define A 8
 
 /*
  * Branch predictor state
@@ -27,6 +10,9 @@
  * by your branch predictor should be here and cannot exceed 4 KiB.
  */
 uintptr_t last_target;
+
+BHT BHT_p;
+composedPHTs PHTs;
 
 /*
  * Initialize branch predictor
@@ -44,8 +30,31 @@ void BP::init()
     *   TRACE_LEVEL_ALL              - record all branches
     * Additionally, you can also write to this file by outputting to br_trace.
     */
+    int qtt_bhr = pow(2, (float)A);
+
+    for (int i = 0; i<qtt_bhr; i++) {
+        simpleBHR BHR;
+        BHR.actualHistoric = 0;
+        BHT_p.push_back(BHR);
+    }
+
+
+    int qtt_pht = qtt_bhr;
+    int len_pht = pow(2, (float)K);
+    for (int i=0; i<qtt_pht; i++) {
+        simplePHT PHT;
+
+        for (int j = 0; j < len_pht; j++) {
+            stateMachine EM;
+            EM.state = 0b00;
+            PHT.push_back(EM);
+        }
+
+        PHTs.push_back(PHT);
+    }
+
     br_trace_level = TRACE_LEVEL_NONE;
-    br_trace << "Custom Branch Predictor!" << endl;
+    br_trace << "PAp 2-level Branch Predictor!" << endl;
 }
 
 /*
@@ -71,16 +80,11 @@ void BP::init()
  */
 Prediction BP::predict(EntInfo br)
 {
-    bool taken;
     uintptr_t target;
-
-    // Check the location of the target relative to the instruction pointer.
-    // If it is a backwards branch, predict taken, otherwise predict not taken.
-    if (br.inst_ptr < br.target) {
-        taken = false;
-    } else {
-        taken = true;
-    }
+    
+    int instAddress = getBitsLessSignificant(A, br.inst_ptr);
+    unsigned int indexToSecondLevel = BHT_p[instAddress].actualHistoric;
+    bool taken = isTaken(PHTs[instAddress][indexToSecondLevel]); 
 
     // Predict the taken target. If the branch is direct, just use the actual
     // target, otherwise, use the last target.
@@ -112,6 +116,15 @@ Prediction BP::predict(EntInfo br)
  */
 void BP::update(ResInfo br)
 {
+    int index = getBitsLessSignificant(A, br.inst_ptr);
+    
+    if (br.taken) {
+        updateToTaken(PHTs[index], BHT_p[index]);
+    } else {
+        updateToNotTaken(PHTs[index], BHT_p[index]);
+    }
+    
+    
     if (!br.direct) {
         last_target = br.target;
     }
