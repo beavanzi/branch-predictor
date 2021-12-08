@@ -37,14 +37,7 @@ void BP::init()
     BHR.actualHistoric = 0;
     int len_pht = pow(2, (float)K);
 
-
-
-    for (int i=0; i<len_pht; i++) {
-        //inicializando cada maquina de estado de PHT
-        stateMachine EM;
-        EM.state = 0b00;
-        PHT.push_back(EM);
-    }
+    initializePHT(PHT, len_pht);
 
     br_trace_level = TRACE_LEVEL_NONE;
     br_trace << "GAg 2-level Branch Predictor!" << endl;

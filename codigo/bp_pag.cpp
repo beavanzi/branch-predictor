@@ -39,14 +39,9 @@ void BP::init()
     }
 
     int len_pht = pow(2, (float)K);
+
     
-
-    for (int j = 0; j < len_pht; j++) {
-        stateMachine EM;
-        EM.state = 0b00;
-        PHT.push_back(EM);
-    }
-
+    initializePHT(PHT, len_pht);
   
     br_trace_level = TRACE_LEVEL_NONE;
     br_trace << "PAg 2-level Branch Predictor!" << endl;

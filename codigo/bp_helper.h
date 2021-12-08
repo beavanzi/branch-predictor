@@ -23,6 +23,15 @@ typedef vector<simpleBHR> BHT;
 
 // Auxiliaries functions
 
+void initializePHT(simplePHT &PHT, int len_pht) {
+    for (int i=0; i<len_pht; i++) {
+        //inicializando cada maquina de estado de PHT
+        stateMachine EM;
+        EM.state = 0b00;
+        PHT.push_back(EM);
+    }
+}
+
 bool isTaken(stateMachine machine){
     return machine.state.to_ulong() >= 2;
 }

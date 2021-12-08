@@ -17,9 +17,13 @@ Para compilar as variações do código e o relatório, execute:
 Crie as variáveis de ambiente executando:
 
 `export PIN_ROOT=$(pwd)/codigo/pin
+
 export PATH=$PIN_ROOT:$PATH
+
 echo -e "\n# environment variables for branch prediction lab" >> ~/.profile
+
 echo "export PIN_ROOT=$PIN_ROOT"   >> ~/.profile
+
 echo 'export PATH=$PIN_ROOT:$PATH' >> ~/.profile`
 
 Para rodar uma variação, execute:

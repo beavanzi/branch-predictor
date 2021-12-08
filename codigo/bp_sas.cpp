@@ -45,11 +45,7 @@ void BP::init()
     for (int i=0; i<qtt_pht; i++) {
         simplePHT PHT;
 
-        for (int j = 0; j < len_pht; j++) {
-            stateMachine EM;
-            EM.state = 0b00;
-            PHT.push_back(EM);
-        }
+        initializePHT(PHT, len_pht);
 
         PHTs.push_back(PHT);
     }
